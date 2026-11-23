@@ -12,4 +12,6 @@ One image that sums up the world's news of Monday 23 November 2026, set as a bro
 node main.ts
 ```
 
-The program copies the repository's `entry.png` to `/output/entry.png` (or to `$MAKEFUN_OUTPUT_DIR/entry.png` outside the grader). Node 22, standard library only.
+The program copies the repository's `entry.png` to `/output/entry.png` (or to `$MAKEFUN_OUTPUT_DIR/entry.png` outside the grader), after checking it against the gate's limits (PNG or JPEG, at most 1 MiB, at most 1024 by 1024). Node 22, standard library only.
+
+The image itself is composed by `compose.py` (Python + PIL): the day's stories, researched from 23 November's reporting, set as a legible broadsheet front page at 1024 by 1024. Rebuild it with `python3 compose.py`.
