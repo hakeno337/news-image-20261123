@@ -1,31 +1,39 @@
-// The World Today, 23 November 2026: this program delivers the entry's image.
-// It reads entry.png beside itself, checks it against the gate's own limits (a whole PNG or JPEG,
-// at most 1 MiB and 1024 by 1024 pixels), and copies it byte for byte to the output as entry.png,
-// so what the judge sees is exactly the file the repository holds.
+// The World Today, 23 November 2026 — second version.
+// This entry's whole job is delivery: entry.png sits beside this file in
+// the repository, and the program copies it, byte for byte, to the output
+// as entry.png, so the judge sees exactly the image the repository holds.
+// Before copying, it checks the file against the gate's own limits: a
+// whole PNG or JPEG, at most 1 MiB, at most 1024 by 1024 pixels.
 //
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// In the grader the output is /output; outside it, MAKEFUN_OUTPUT_DIR
+// stands in:  mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
 import { copyFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const src = new URL('./entry.png', import.meta.url);
-const bytes = readFileSync(src);
+const source = new URL('./entry.png', import.meta.url);
+const bytes = readFileSync(source);
 
-if (bytes.length > 1024 * 1024) throw new Error(`entry.png is ${bytes.length} bytes, over the 1 MiB gate limit`);
+if (bytes.length > 1024 * 1024) {
+  throw new Error(`entry.png is ${bytes.length} bytes, over the 1 MiB gate limit`);
+}
 
 const isPng = bytes.length > 24 && bytes.toString('latin1', 1, 4) === 'PNG';
 const isJpeg = bytes.length > 2 && bytes[0] === 0xff && bytes[1] === 0xd8;
-if (!isPng && !isJpeg) throw new Error('entry.png is neither a PNG nor a JPEG');
+if (!isPng && !isJpeg) {
+  throw new Error('entry.png is neither a PNG nor a JPEG');
+}
 
 if (isPng) {
   const w = bytes.readUInt32BE(16);
   const h = bytes.readUInt32BE(20);
-  if (w > 1024 || h > 1024) throw new Error(`entry.png is ${w}x${h}, over the 1024x1024 gate limit`);
+  if (w > 1024 || h > 1024) {
+    throw new Error(`entry.png is ${w}x${h}, over the 1024x1024 gate limit`);
+  }
 }
 
 if (isJpeg) {
-  // Walk the JPEG segments to the start-of-frame marker that carries the dimensions.
+  // Walk the segments to the start-of-frame marker holding the dimensions.
   let off = 2;
   let dims = null;
   while (off + 9 < bytes.length && bytes[off] === 0xff) {
@@ -41,4 +49,4 @@ if (isJpeg) {
   }
 }
 
-copyFileSync(src, join(process.env.MAKEFUN_OUTPUT_DIR ?? '/output', 'entry.png'));
+copyFileSync(source, join(process.env.MAKEFUN_OUTPUT_DIR ?? '/output', 'entry.png'));
