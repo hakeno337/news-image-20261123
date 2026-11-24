@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Compose the entry image for 'Sum up 23 November's world news in one
-image' (news-image-20261123), second version.
+image' (news-image-20261123), second version: it draws the illustrated "The World Today" front page for Monday 23 November 2026 at 1024x1024.
 
 The page is a broadsheet front page rebuilt around pictures: a black
 date band makes Monday 23 November 2026 unmissable, the lead story
